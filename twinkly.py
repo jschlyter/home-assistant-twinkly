@@ -6,6 +6,8 @@ import codecs
 ARG_ON = 'on'
 ARG_OFF = 'off'
 ARG_STATE = 'state'
+ARG_SET_BROKER = 'set_broker'
+ARG_GET_BROKER = 'get_broker'
 
 ARG_IP = sys.argv[1]
 ARG_ACTION = sys.argv[2]
@@ -15,6 +17,7 @@ URL = "http://" + ARG_IP + "/xled/v1/"
 LOGIN_URL = URL + "login"
 VERIFY_URL = URL + "verify"
 MODE_URL = URL + "led/mode"
+MQTT_URL = URL + "mqtt/config"
 
 AUTH_HEADER = 'X-Auth-Token'
 
@@ -73,9 +76,23 @@ def getState():
   else:
     print(0)
 
+def getBroker():
+  request = urllib.request.Request(url = MQTT_URL, headers = HEADERS)
+  print(processRequestJSON(request))
+
+def setBroker(broker):
+  payload = { 'broker_host': broker }
+  request = urllib.request.Request(url = MQTT_URL, headers = HEADERS, data = formatData(payload))
+  print(processRequestJSON(request))
+
+
 if ARG_ACTION == ARG_ON:
   turnOn()
 elif ARG_ACTION == ARG_OFF:
   turnOff()
 elif ARG_ACTION == ARG_STATE:
   getState()
+elif ARG_ACTION == ARG_GET_BROKER:
+  getBroker()
+elif ARG_ACTION == ARG_SET_BROKER:
+  setBroker(sys.argv[3])
